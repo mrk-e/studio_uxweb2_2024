@@ -4,13 +4,16 @@
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Collaborative Drawing Demo</title>
+
+    <!-- Hier ist der CSS Stuff drinnen -->
     <style>
         body,
         html {
             height: 100%;
             width: 100%;
             margin: 0px;
-            touch-action: none; /* disable touch events on the browser itself. We use the touch events for drawing */
+            touch-action: none;
+            /* disable touch events on the browser itself. We use the touch events for drawing */
         }
 
         canvas {
@@ -24,10 +27,12 @@
 <body>
     <canvas id="canvas"></canvas>
 </body>
+
+<!-- Das ist der Javascript Stuff -->
 <script src="/socket.io/socket.io.js"></script>
 <script>
     let myColour = "black";
-    
+
     const socket = io();
     // received a colour
     socket.on("colour", (colour) => {
@@ -40,13 +45,14 @@
         draw_path(msg.from, msg.to, msg.colour)
     });
 
-
+    // Es muss immer dem Canvas nochmal gesagt werden wie groß er ist, sonst funktioniert es nicht
     let canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     let ctx = canvas.getContext('2d');
 
-    // drawing styles
+
+    // Styleangabe wie dick die Linie ist etc.
     ctx.lineWidth = 5;
     ctx.lineCap = 'round';
     last_mouse = {
@@ -54,10 +60,16 @@
         y: 0
     };
 
+    // Standardmäßig soll nicht gezeichnet werden
     let painting = false;
+
+
     function startDraw(e) {
         console.log("start drawing");
+        // Zum Auslesen des Pointerevents bzw. alle Informationen, welche übergeben werden
+        // console.log(e);
         painting = true;
+        // clientX ist eine Variable innerhalb dem Pointerevent in welchem die X-Koordinate des Punkts steht
         last_mouse.x = e.clientX;
         last_mouse.y = e.clientY;
     }
@@ -67,22 +79,27 @@
         painting = false;
     }
 
+    // Dieses Event wird immer ausgeführt wenn der Pointer bewegt wird
     function draw(e) {
         console.log("drawing");
         if (painting) {
             console.log("drawing inside if statement");
             console.log(e);
+            // Befehl an den Socket, um die aktuelle Pointerposition & Farbe an den Server zu senden, damit dort auch sozusagen gemalt wird -> Der Server schickt das dann an alle anderen Clients weiter und so wird dann auch bei den anderen gezeichnet
             socket.emit("draw", {
                 from: { x: last_mouse.x, y: last_mouse.y },
                 to: { x: e.clientX, y: e.clientY },
                 colour: myColour
             });
             draw_path(last_mouse, { x: e.clientX, y: e.clientY }, myColour);
+            // Das muss gemacht werden, damit nur vom letzten gemalten Punkt zum aktuellen Punkt die Linie gezogen wird
             last_mouse.x = e.clientX;
             last_mouse.y = e.clientY;
         }
     }
 
+
+    // In dieser Funktion sind Befehle, die für das Zeichnen benötigt werden reingeschrieben
     function draw_path(from, to, colour) {
         ctx.strokeStyle = colour;
         ctx.beginPath();
@@ -95,6 +112,7 @@
 
     canvas.addEventListener('pointerdown', startDraw);
     canvas.addEventListener('pointerup', endDraw);
+    // Bei Bewegung von Pointer wird die Funktion draw ausgeführt
     canvas.addEventListener('pointermove', draw);
 
 

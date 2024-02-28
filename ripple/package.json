@@ -1,0 +1,24 @@
+{
+  "name": "studio_uxweb2_2024",
+  "version": "1.0.0",
+  "description": "![di logo](https://github.com/digitalideation/comppx_h2001/blob/master/docs/assets/images/di-logo-small.jpg?raw=true \"di logo\")",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitalideation/studio_uxweb2_2024.git"
+  },
+  "author": "Maria Husmann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/digitalideation/studio_uxweb2_2024/issues"
+  },
+  "homepage": "https://github.com/digitalideation/studio_uxweb2_2024#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4"
+  }
+}

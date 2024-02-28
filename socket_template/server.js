@@ -30,8 +30,8 @@ io.on('connection', (socket) => {
     socket.emit('msg', "welcome from the server");
 
     // forward the message to all clients except the sender
-    socket.on('client_msg', (msg) => {
-        socket.broadcast.emit('client_msg', msg);
+    socket.on('draw', (msg) => {
+        socket.broadcast.emit('draw', msg);
     })
 });
 
