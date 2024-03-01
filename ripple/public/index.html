@@ -107,14 +107,14 @@
     socket.on("clientNumber", (clientCount) => {
         console.log(clientCount);
         if (clientCount % 2 !== 0) {
-            document.body.style.backgroundColor = "#444444";
+            document.body.style.backgroundColor = "#000";
             // SVG-Element auswählen
             var svgElement = document.getElementById("ripple-template");
             // Ändern der Stroke-Farbe
-            svgElement.setAttribute("style", "stroke: darkred;");
+            svgElement.setAttribute("style", "stroke: white;");
         }
         else {
-            document.body.style.backgroundColor = "#EEEEEE";
+            document.body.style.backgroundColor = "#fff";
         }
     });
 
