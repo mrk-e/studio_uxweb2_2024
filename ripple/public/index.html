@@ -3,45 +3,91 @@
 
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- <meta name="theme-color" content="#000000"> -->
     <title>Basic Socket template</title>
     <style>
     </style>
 </head>
 
 <body>
+
+    <!-- Alles was hier drinnen ist wird für die Animation benötigt -->
+    <!-- Das hier sind erstmal allgemeine Angaben zu dem Viewport der SVG -->
+    <!-- viewBox erstellt praktisch einen Container innerhalb welchem die SVGs dann erscheinen -->
     <svg id="ripple-template" version="1.1" xmlns="http://www.w3.org/2000/svg"
-        style="background: none; display: none; shape-rendering: auto;" viewBox="-250 -250 500 500"
-        preserveAspectRatio="xMidYMid">
+        style="background: none; display: none; shape-rendering: auto; filter: drop-shadow(rgba(128, 128, 128, 0.5) 0px 0px 10px); overflow:visible; filter: invert(100%)"
+        viewBox="-250 -250 500 500" preserveAspectRatio="xMidYMid">
         <!-- Hier ist ein display: none, damit am Anfang nicht direkt einmal die Animation abgespielt wird -->
-        <circle r="5" fill="none" stroke="#1092c9" stroke-width="5">
-            <animate attributeName="r" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1" calcMode="spline"
-                begin="0s"></animate>
+        <defs>
+            <!-- Hier wird ein linearer Verlauf erstellt, welcher dann für den Stroke der Rechtecke genutzt wird -->
+            <linearGradient id="grad" x1="6%" y1="6%" x2="94%" y2="94%">
+                <stop offset="0%" style="stop-color:rgba(255, 255, 255, 0.20)" />
+                <stop offset="100%" style="stop-color:rgba(255, 255, 255, 0.10)" />
+            </linearGradient>
+        </defs>
+
+        <!-- Rechteck Animationsteil 01 -->
+        <rect width="500" height="500" x="0" y="0" rx="0" ry="0" fill="none" stroke="url(#grad)" stroke-width="10">
+            <!-- dur = Dauer Animation (in Sek); 
+                class = Ist der Name einer zugewiesene Klasse;
+                attributeName = Welche Eigenschaft(welches eigene Attribut) der Animation zugewiesen wird;
+                values = Start und Endwert der Animation;
+                keyTimes = Wann die Animation startet und endet (von 0 bis 1);
+                keySplines = Das ist die Bezierkurve, welche die Geschwindigkeit steuert; 
+                begin = Wann die Animation startet;
+                fill = Gibt an was am Ende der Animation passiert/freeze bewirkt, dass die Animation am Ende stehen bleibt;
+                calcMode = Gibt an dass die Animation eine Bezierkurve beeinhaltet -->
+            <animate attributeName="width" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0s"></animate>
+            <animate attributeName="height" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0s"></animate>
+            <!-- Hier wird die X & Y Position so verschoben, dass sich das Rechteck aus der Mitte ausbreitet -->
+            <animate attributeName="x" dur="2s" values="0;-125" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0s"></animate>
+            <animate attributeName="y" dur="2s" values="0;-125" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0s"></animate>
             <animate attributeName="opacity" dur="2s" values="1;0" keyTimes="0;1" keySplines="0.2 0 0.8 1"
                 calcMode="spline" begin="0s" fill="freeze"></animate>
-        </circle>
-        <circle r="5" fill="none" stroke="#1092c9" stroke-width="5">
+        </rect>
+
+        <!-- Rechteck Animationsteil 02 -->
+        <rect width="500" height="500" x="0" y="0" rx="0" ry="0" fill="none" stroke="url(#grad)" stroke-width="10">
             <animate attributeName="opacity" dur="0.6s" values="0;0" keyTimes="0;1" keySplines="0.2 0 0.8 1"
                 calcMode="spline" begin="0s" fill="freeze"></animate>
-            <animate attributeName="r" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1" calcMode="spline"
-                begin="0.6s"></animate>
+            <animate attributeName="width" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0.6s"></animate>
+            <animate attributeName="height" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0.6s"></animate>
+            <!-- Hier wird die X & Y Position so verschoben, dass sich das Rechteck aus der Mitte ausbreitet -->
+            <animate attributeName="x" dur="2s" values="0;-125" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0.6s"></animate>
+            <animate attributeName="y" dur="2s" values="0;-125" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="0.6s"></animate>
             <animate attributeName="opacity" dur="2s" values="1;0" keyTimes="0;1" keySplines="0.2 0 0.8 1"
                 calcMode="spline" begin="0.6s" fill="freeze"></animate>
-        </circle>
-        <circle r="5" fill="none" stroke="#1092c9" stroke-width="5">
+        </rect>
+
+        <!-- Rechteck Animationsteil 03 -->
+        <rect width="500" height="500" x="0" y="0" rx="0" ry="0" fill="none" stroke="url(#grad)" stroke-width="10">
             <animate attributeName="opacity" dur="1.2s" values="0;0" keyTimes="0;1" keySplines="0.2 0 0.8 1"
                 calcMode="spline" begin="0s" fill="freeze"></animate>
-            <animate attributeName="r" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1" calcMode="spline"
-                begin="1.2s"></animate>
+            <animate attributeName="width" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="1.2s"></animate>
+            <animate attributeName="height" dur="2s" values="0;250" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="1.2s"></animate>
+            <!-- Hier wird die X & Y Position so verschoben, dass sich das Rechteck aus der Mitte ausbreitet -->
+            <animate attributeName="x" dur="2s" values="0;-125" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="1.2s"></animate>
+            <animate attributeName="y" dur="2s" values="0;-125" keyTimes="0;1" keySplines="0 0.2 0.8 1"
+                calcMode="spline" begin="1.2s"></animate>
             <animate class="last" attributeName="opacity" dur="2s" values="1;0" keyTimes="0;1" keySplines="0.2 0 0.8 1"
                 calcMode="spline" begin="1.2s" fill="freeze"></animate>
-        </circle>
+        </rect>
     </svg>
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-
-
     const socket = io();
     let offset_x = 0;
 
@@ -50,7 +96,26 @@
 
     // received a ripple event from another client
     socket.on("ripple", (msg) => {
-        add_ripple(msg.x - offset_x, msg.y);
+        //Allgemeine Platzierung auf dem Canvas
+        // add_ripple(msg.x - offset_x, msg.y);
+        // Gespiegelte Platzierung auf dem Canvas
+        var bodyWidth = document.body.clientWidth;
+        add_ripple((bodyWidth - msg.x), msg.y);
+    });
+
+    // Hier erhält der Server die Number an Client
+    socket.on("clientNumber", (clientCount) => {
+        console.log(clientCount);
+        if (clientCount % 2 !== 0) {
+            document.body.style.backgroundColor = "#444444";
+            // SVG-Element auswählen
+            var svgElement = document.getElementById("ripple-template");
+            // Ändern der Stroke-Farbe
+            svgElement.setAttribute("style", "stroke: darkred;");
+        }
+        else {
+            document.body.style.backgroundColor = "#EEEEEE";
+        }
     });
 
     // Hier erhält der Server die Position des Offsets auf welchem das jeweilige Fenster sozusagen auf dem großen Canvas platziert ist
@@ -62,12 +127,14 @@
     // create a ripple on click and send it to the other clients
     document.addEventListener('click', e => {
         add_ripple(e.pageX, e.pageY);
-        // Hier wird auch der Offset von X mitberechnet. Damit man versteht, auf welcher Position der Ripple auf dem globalen Canvas platziert wird
-        socket.emit('ripple', { x: offset_x + e.pageX, y: e.pageY });
-        // Der Sound wird gestartet. Mit jedem Spielen muss die Datei wieder zurück auf null gesetzt werden
-        let audioPlayer = document.getElementById('audioPlayer');
-        audioPlayer.currentTime = 0
-        audioPlayer.play();
+        // // Hier wird auch der Offset von X mitberechnet. Damit man versteht, auf welcher Position der Ripple auf dem globalen Canvas platziert wird
+        // socket.emit('ripple', { x: offset_x + e.pageX, y: e.pageY });
+        // Durch das Ersetzen von x: offset_x + e.pageX, y: e.pageY, wird nur die reine position der Animation auf der Seite gesendet
+        socket.emit('ripple', { x: e.pageX, y: e.pageY });
+        // // Der Sound wird gestartet. Mit jedem Spielen muss die Datei wieder zurück auf null gesetzt werden
+        // let audioPlayer = document.getElementById('audioPlayer');
+        // audioPlayer.currentTime = 0
+        // audioPlayer.play();
 
     });
 
@@ -103,6 +170,7 @@
         //     socket.emit('dimensions', { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight });
     });
 
+    // Diese Funktion sendet die Größe des jeweiligen Screens an den Server
     function send_dimensions() {
         socket.emit('dimensions', { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight });
     }

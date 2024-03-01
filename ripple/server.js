@@ -7,7 +7,7 @@ import { createServer } from 'node:http';
 // the current x position of global canvas. Any new client will be appended to the right of the canvas
 // TODO you can come up with a more sophisticated way to handle this and and also handle the removal of disconnected clients
 let current_x = 0;
-
+let countClient = 0;
 // create a new express web server
 let app = express();
 
@@ -29,6 +29,11 @@ app.use(express.static('public'));
 // a client has connected
 io.on('connection', (socket) => {
     console.log('a client connected');
+    countClient++;
+
+    // Hier sendet der Client um welche Nummer an Client es sich handelt
+    socket.emit('clientNumber', countClient);
+    console.log('countClient' + countClient);
 
     // forward the draw message to all clients except the sender
     socket.on('ripple', (msg) => {
