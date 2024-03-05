@@ -2,9 +2,11 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=.0">
     <title>Sensors</title>
     <script src="lib/matter.js"></script>
+    <script src="lib/shake.js"></script>
 
     <style>
         body,
@@ -28,11 +30,37 @@
 
 <body>
 
-
 </body>
 
 
 <script>
+    var accelerationX;
+    var accelerationY;
+    var accelerationZ;
+    var orientationAlpha;
+    var orientationBeta;
+    var orientationGamma;
+
+    console.log(accelerationX, orientationBeta);
+
+    // Die Funktionen deviceMotionHandler und deviceOrientationHandler werden verwendet, um die Werte zu aktualisieren und zu runden
+    function deviceMotionHandler(event) {
+        accelerationX = Math.round(event.acceleration.x * 10) / 10;
+        accelerationY = Math.round(event.acceleration.y * 10) / 10;
+        accelerationZ = Math.round(event.acceleration.z * 10) / 10;
+        console.log("deviceMotionHandler");
+    }
+
+    function deviceOrientationHandler(event) {
+        orientationAlpha = Math.round(event.alpha * 10) / 10;
+        orientationBeta = Math.round(event.beta * 10) / 10;
+        orientationGamma = Math.round(event.gamma * 10) / 10;
+        console.log("deviceOrientationHandler");
+    }
+
+    // Event-Listener für das Geräteorientierungsereignis
+    window.addEventListener("deviceMotion", deviceMotionHandler, true);
+    window.addEventListener("deviceOrientation", deviceOrientationHandler, true);
 
     // module aliases
     var Engine = Matter.Engine,
@@ -47,7 +75,6 @@
 
     // create an engine
     var engine = Engine.create();
-
 
     // Berechnung der Auflösung des Displays
     const pixelRatio = window.devicePixelRatio;
@@ -67,24 +94,14 @@
         }
     });
 
-    //     // Erstellen von Körpern
-    // const box = Bodies.rectangle(400 * pixelRatio, 200 * pixelRatio, 80 * pixelRatio, 80 * pixelRatio);
-    // const ground = Bodies.rectangle(400 * pixelRatio, 600 * pixelRatio, 800 * pixelRatio, 50 * pixelRatio, { isStatic: true });
-
-
     // create two boxes and a ground
-    var bodyWidth = document.body.clientWidth - 10;
-    // var boxB = Bodies.rectangle(450, 50, 80, 80, { isStatic: true });
     var ground = Bodies.rectangle(400 * pixelRatio, 610 * pixelRatio, 810 * pixelRatio, 40 * pixelRatio, { isStatic: true });
     var ceiling = Bodies.rectangle(400 * pixelRatio, 0 * pixelRatio, 810 * pixelRatio, 20 * pixelRatio, { isStatic: true });
     var borderLeft = Bodies.rectangle(0 * pixelRatio, 300 * pixelRatio, 10 * pixelRatio, 700 * pixelRatio, { isStatic: true });
     var borderRight = Bodies.rectangle(800 * pixelRatio, 300 * pixelRatio, 10 * pixelRatio, 700 * pixelRatio, { isStatic: true });
-
     var stack = Composites.stack(100, 0, 10 * pixelRatio, 8 * pixelRatio, 10 * pixelRatio, 10 * pixelRatio, function (x, y) {
         return Bodies.circle(x, y, Common.random(15, 30), { restitution: 0.0, friction: 0.5, density: 1 });
     });
-
-    console.log(pixelRatio);
 
     // add all of the bodies to the world
     Composite.add(engine.world, [stack, borderLeft, borderRight, ground, ceiling]);
@@ -96,16 +113,14 @@
             constraint: {
                 stiffness: 0.2,
                 render: {
-                    visible: true
+                    visible: false
                 }
             }
         });
 
-
     // Gravitation umkehren
+    engine.world.gravity.x = -1; // Hier wird die Gravitation entgegengesetzt gesetzt
     engine.world.gravity.y = -1; // Hier wird die Gravitation entgegengesetzt gesetzt
-
-
 
     Composite.add(engine.world, mouseConstraint);
 
@@ -120,7 +135,6 @@
 
     // run the engine
     Runner.run(runner, engine);
-
 </script>
 
 </html>
