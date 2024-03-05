@@ -24,73 +24,103 @@
 </head>
 
 <body>
-    <canvas id="canvas"></canvas>
+    <!-- <canvas id="canvas"></canvas> -->
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" accept="image/*" capture="camera" id="fileInput" name="image">
+        <button type="submit">Bild hochladen</button>
+    </form>
+
 
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    let canvas = document.getElementById('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
 
-    let painting = false;
-    let ctx = canvas.getContext('2d');
-    // drawing styles
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    last_mouse = {
-        x: 0,
-        y: 0
-    };
+    form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent default form submission
 
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]); // Append the selected file to the FormData object
 
-
-    function startDraw(e) {
-        painting = true;
-        console.log("start drawing");
-        console.log(e);
-        last_mouse.x = e.clientX;
-        last_mouse.y = e.clientY;
-    }
-
-    function endDraw(e) {
-        painting = false;
-        console.log("end drawing");
-    }
-
-    function draw(e) {
-        if (painting) {
-            console.log("drawing");
-
-            // Hier wird die Schreibposition an den Server gesendet
-            // Hier wird ein Draw Event an den Server gesendet
-            socket.emit("draw", {
-                from: { x: last_mouse.x, y: last_mouse.y },
-                to: { x: e.clientX, y: e.clientY }
+        // Here you can use fetch or any other method to send the form data to the server
+        // Example using fetch:
+        fetch('upload.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                // Handle response from server
+                console.log('Upload successful');
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error uploading:', error);
             });
-
-            // Die Malfunktion wird aufgerufen und neuen Malkoordinaten übergeben
-            draw_path(last_mouse, { x: e.clientX, y: e.clientY }, "darkgrey");
-
-            last_mouse.x = e.clientX;
-            last_mouse.y = e.clientY;
-        }
-    }
-
-    // In dieser Funktion sind Befehle, die für das Zeichnen benötigt werden reingeschrieben
-    function draw_path(from, to, colour) {
-        ctx.strokeStyle = colour;
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.closePath();
-        ctx.stroke();
-    }
+    });
 
 
-    canvas.addEventListener('pointerdown', startDraw);
-    canvas.addEventListener('pointerup', endDraw);
-    canvas.addEventListener('pointermove', draw);
+
+    // let canvas = document.getElementById('canvas');
+    // canvas.width = window.innerWidth;
+    // canvas.height = window.innerHeight;
+
+    // let painting = false;
+    // let ctx = canvas.getContext('2d');
+    // // drawing styles
+    // ctx.lineWidth = 5;
+    // ctx.lineCap = 'round';
+    // last_mouse = {
+    //     x: 0,
+    //     y: 0
+    // };
+
+    // function startDraw(e) {
+    //     painting = true;
+    //     console.log("start drawing");
+    //     console.log(e);
+    //     last_mouse.x = e.clientX;
+    //     last_mouse.y = e.clientY;
+    // }
+
+    // function endDraw(e) {
+    //     painting = false;
+    //     console.log("end drawing");
+    // }
+
+    // function draw(e) {
+    //     if (painting) {
+    //         console.log("drawing");
+
+    //         // Hier wird die Schreibposition an den Server gesendet
+    //         // Hier wird ein Draw Event an den Server gesendet
+    //         socket.emit("draw", {
+    //             from: { x: last_mouse.x, y: last_mouse.y },
+    //             to: { x: e.clientX, y: e.clientY }
+    //         });
+
+    //         // Die Malfunktion wird aufgerufen und neuen Malkoordinaten übergeben
+    //         draw_path(last_mouse, { x: e.clientX, y: e.clientY }, "darkgrey");
+
+    //         last_mouse.x = e.clientX;
+    //         last_mouse.y = e.clientY;
+    //     }
+    // }
+
+    // // In dieser Funktion sind Befehle, die für das Zeichnen benötigt werden reingeschrieben
+    // function draw_path(from, to, colour) {
+    //     ctx.strokeStyle = colour;
+    //     ctx.beginPath();
+    //     ctx.moveTo(from.x, from.y);
+    //     ctx.lineTo(to.x, to.y);
+    //     ctx.closePath();
+    //     ctx.stroke();
+    // }
+
+    // canvas.addEventListener('pointerdown', startDraw);
+    // canvas.addEventListener('pointerup', endDraw);
+    // canvas.addEventListener('pointermove', draw);
 
 
 
