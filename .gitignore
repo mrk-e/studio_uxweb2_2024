@@ -4,3 +4,4 @@ socket_template/node_modules/
 # Hier sollte man immer drauf achten, dass man nicht die node-module daten hochladen. 
 # Dafür einfach den Pfad des Node-module Ordner auf die Gitignore Liste packen
 ripple/node_modules/
+sensors/node_modules/

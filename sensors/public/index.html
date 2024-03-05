@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Basic Socket template</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            touch-action: none;
+            /* disable touch events on the browser itself. We use the touch events for drawing */
+        }
+
+        canvas {
+            height: 100%;
+            width: 100%;
+            display: block;
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let painting = false;
+    let ctx = canvas.getContext('2d');
+    // drawing styles
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    last_mouse = {
+        x: 0,
+        y: 0
+    };
+
+
+
+    function startDraw(e) {
+        painting = true;
+        console.log("start drawing");
+        console.log(e);
+        last_mouse.x = e.clientX;
+        last_mouse.y = e.clientY;
+    }
+
+    function endDraw(e) {
+        painting = false;
+        console.log("end drawing");
+    }
+
+    function draw(e) {
+        if (painting) {
+            console.log("drawing");
+
+            // Hier wird die Schreibposition an den Server gesendet
+            // Hier wird ein Draw Event an den Server gesendet
+            socket.emit("draw", {
+                from: { x: last_mouse.x, y: last_mouse.y },
+                to: { x: e.clientX, y: e.clientY }
+            });
+
+            // Die Malfunktion wird aufgerufen und neuen Malkoordinaten übergeben
+            draw_path(last_mouse, { x: e.clientX, y: e.clientY }, "darkgrey");
+
+            last_mouse.x = e.clientX;
+            last_mouse.y = e.clientY;
+        }
+    }
+
+    // In dieser Funktion sind Befehle, die für das Zeichnen benötigt werden reingeschrieben
+    function draw_path(from, to, colour) {
+        ctx.strokeStyle = colour;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+
+    canvas.addEventListener('pointerdown', startDraw);
+    canvas.addEventListener('pointerup', endDraw);
+    canvas.addEventListener('pointermove', draw);
+
+
+
+    const socket = io();
+    // received a message from the server
+    socket.on("msg", msg => {
+        console.log(msg);
+    });
+
+    // received a message from another client
+    socket.on("client_msg", msg => {
+        console.log(msg);
+    });
+
+    // connection established to the server
+    socket.on("connect", () => {
+        // send a message to the server for the other clients
+        socket.emit("client_msg", "Hello from the client " + socket.id);
+    });
+
+    // received a draw event from another client
+    // Praktisch, die Funktion empfängt nur Daten wenn die Datei als draw gekennzeichnet wird
+    socket.on("draw", msg => {
+        console.log("received draw event");
+        console.log(msg);
+        draw_path(msg.from, msg.to, '#f2f2f2');
+    });
+
+</script>
+
+</html>
