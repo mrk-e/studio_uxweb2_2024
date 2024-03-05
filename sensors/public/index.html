@@ -24,130 +24,60 @@
 </head>
 
 <body>
-    <!-- <canvas id="canvas"></canvas> -->
-
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" accept="image/*" capture="camera" id="fileInput" name="image">
-        <button type="submit">Bild hochladen</button>
-    </form>
 
 
 </body>
-<script src="/socket.io/socket.io.js"></script>
+<script src="matter.js"></script>
+
 <script>
-    const form = document.getElementById('uploadForm');
-    const fileInput = document.getElementById('fileInput');
 
-    form.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent default form submission
+    // module aliases
+    var Engine = Matter.Engine,
+        Render = Matter.Render,
+        Runner = Matter.Runner,
+        Bodies = Matter.Bodies,
+        Composite = Matter.Composite,
+        Common = Matter.Common,
+        MouseConstraint = Matter.MouseConstraint,
+        Mouse = Matter.Mouse,
+        Composites = Matter.Composites;
 
-        const formData = new FormData();
-        formData.append('image', fileInput.files[0]); // Append the selected file to the FormData object
+    // create an engine
+    var engine = Engine.create();
 
-        // Here you can use fetch or any other method to send the form data to the server
-        // Example using fetch:
-        fetch('upload.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => {
-                // Handle response from server
-                console.log('Upload successful');
-            })
-            .catch(error => {
-                // Handle errors
-                console.error('Error uploading:', error);
-            });
+    // create a renderer
+    var render = Render.create({
+        element: document.body,
+        engine: engine
     });
 
-
-
-    // let canvas = document.getElementById('canvas');
-    // canvas.width = window.innerWidth;
-    // canvas.height = window.innerHeight;
-
-    // let painting = false;
-    // let ctx = canvas.getContext('2d');
-    // // drawing styles
-    // ctx.lineWidth = 5;
-    // ctx.lineCap = 'round';
-    // last_mouse = {
-    //     x: 0,
-    //     y: 0
-    // };
-
-    // function startDraw(e) {
-    //     painting = true;
-    //     console.log("start drawing");
-    //     console.log(e);
-    //     last_mouse.x = e.clientX;
-    //     last_mouse.y = e.clientY;
-    // }
-
-    // function endDraw(e) {
-    //     painting = false;
-    //     console.log("end drawing");
-    // }
-
-    // function draw(e) {
-    //     if (painting) {
-    //         console.log("drawing");
-
-    //         // Hier wird die Schreibposition an den Server gesendet
-    //         // Hier wird ein Draw Event an den Server gesendet
-    //         socket.emit("draw", {
-    //             from: { x: last_mouse.x, y: last_mouse.y },
-    //             to: { x: e.clientX, y: e.clientY }
-    //         });
-
-    //         // Die Malfunktion wird aufgerufen und neuen Malkoordinaten übergeben
-    //         draw_path(last_mouse, { x: e.clientX, y: e.clientY }, "darkgrey");
-
-    //         last_mouse.x = e.clientX;
-    //         last_mouse.y = e.clientY;
-    //     }
-    // }
-
-    // // In dieser Funktion sind Befehle, die für das Zeichnen benötigt werden reingeschrieben
-    // function draw_path(from, to, colour) {
-    //     ctx.strokeStyle = colour;
-    //     ctx.beginPath();
-    //     ctx.moveTo(from.x, from.y);
-    //     ctx.lineTo(to.x, to.y);
-    //     ctx.closePath();
-    //     ctx.stroke();
-    // }
-
-    // canvas.addEventListener('pointerdown', startDraw);
-    // canvas.addEventListener('pointerup', endDraw);
-    // canvas.addEventListener('pointermove', draw);
-
-
-
-    const socket = io();
-    // received a message from the server
-    socket.on("msg", msg => {
-        console.log(msg);
+    // create two boxes and a ground
+    var boxA = Bodies.rectangle(400, 200, 80, 80, { isStatic: true });
+    var boxB = Bodies.rectangle(450, 50, 80, 80, { isStatic: true });
+    var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+    var stack = Composites.stack(100, 0, 10, 8, 10, 10, function (x, y) {
+        return Bodies.circle(x, y, Common.random(15, 30), { restitution: 0.0, friction: 0.5, density: 1 });
     });
+    // add all of the bodies to the world
+    Composite.add(engine.world, [stack, boxA, boxB, ground]);
+    // add mouse control
+    var mouse = Mouse.create(render.canvas),
+        mouseConstraint = MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: {
+                    visible: true
+                }
+            }
+        });
 
-    // received a message from another client
-    socket.on("client_msg", msg => {
-        console.log(msg);
-    });
+    Composite.add(engine.world, mouseConstraint);
 
-    // connection established to the server
-    socket.on("connect", () => {
-        // send a message to the server for the other clients
-        socket.emit("client_msg", "Hello from the client " + socket.id);
-    });
-
-    // received a draw event from another client
-    // Praktisch, die Funktion empfängt nur Daten wenn die Datei als draw gekennzeichnet wird
-    socket.on("draw", msg => {
-        console.log("received draw event");
-        console.log(msg);
-        draw_path(msg.from, msg.to, '#f2f2f2');
-    });
+    // keep the mouse in sync with rendering
+    render.mouse = mouse;
+    // run the renderer
+    Render.run(render);
 
 </script>
 
