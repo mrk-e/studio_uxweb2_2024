@@ -2,8 +2,10 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Basic Socket template</title>
+    <meta name="viewport" content="width=device-width,initial-scale=.0">
+    <title>Sensors</title>
+    <script src="lib/matter.js"></script>
+
     <style>
         body,
         html {
@@ -12,6 +14,7 @@
             margin: 0px;
             touch-action: none;
             /* disable touch events on the browser itself. We use the touch events for drawing */
+
         }
 
         canvas {
@@ -27,7 +30,7 @@
 
 
 </body>
-<script src="matter.js"></script>
+
 
 <script>
 
@@ -45,21 +48,47 @@
     // create an engine
     var engine = Engine.create();
 
+
+    // Berechnung der Auflösung des Displays
+    const pixelRatio = window.devicePixelRatio;
+    const width = 800 * pixelRatio; // Anpassen der Breite basierend auf der Pixeldichte
+    const height = 600 * pixelRatio; // Anpassen der Höhe basierend auf der Pixeldichte
+
+
     // create a renderer
     var render = Render.create({
         element: document.body,
-        engine: engine
+        engine: engine,
+        options: {
+            width,
+            height,
+            wireframes: false,
+            background: '#f0f0f0' // Hintergrundfarbe des Canvas setzen
+        }
     });
 
+    //     // Erstellen von Körpern
+    // const box = Bodies.rectangle(400 * pixelRatio, 200 * pixelRatio, 80 * pixelRatio, 80 * pixelRatio);
+    // const ground = Bodies.rectangle(400 * pixelRatio, 600 * pixelRatio, 800 * pixelRatio, 50 * pixelRatio, { isStatic: true });
+
+
     // create two boxes and a ground
-    var boxA = Bodies.rectangle(400, 200, 80, 80, { isStatic: true });
-    var boxB = Bodies.rectangle(450, 50, 80, 80, { isStatic: true });
-    var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
-    var stack = Composites.stack(100, 0, 10, 8, 10, 10, function (x, y) {
+    var bodyWidth = document.body.clientWidth - 10;
+    // var boxB = Bodies.rectangle(450, 50, 80, 80, { isStatic: true });
+    var ground = Bodies.rectangle(400 * pixelRatio, 610 * pixelRatio, 810 * pixelRatio, 40 * pixelRatio, { isStatic: true });
+    var ceiling = Bodies.rectangle(400 * pixelRatio, 0 * pixelRatio, 810 * pixelRatio, 20 * pixelRatio, { isStatic: true });
+    var borderLeft = Bodies.rectangle(0 * pixelRatio, 300 * pixelRatio, 10 * pixelRatio, 700 * pixelRatio, { isStatic: true });
+    var borderRight = Bodies.rectangle(800 * pixelRatio, 300 * pixelRatio, 10 * pixelRatio, 700 * pixelRatio, { isStatic: true });
+
+    var stack = Composites.stack(100, 0, 10 * pixelRatio, 8 * pixelRatio, 10 * pixelRatio, 10 * pixelRatio, function (x, y) {
         return Bodies.circle(x, y, Common.random(15, 30), { restitution: 0.0, friction: 0.5, density: 1 });
     });
+
+    console.log(pixelRatio);
+
     // add all of the bodies to the world
-    Composite.add(engine.world, [stack, boxA, boxB, ground]);
+    Composite.add(engine.world, [stack, borderLeft, borderRight, ground, ceiling]);
+
     // add mouse control
     var mouse = Mouse.create(render.canvas),
         mouseConstraint = MouseConstraint.create(engine, {
@@ -72,12 +101,25 @@
             }
         });
 
+
+    // Gravitation umkehren
+    engine.world.gravity.y = -1; // Hier wird die Gravitation entgegengesetzt gesetzt
+
+
+
     Composite.add(engine.world, mouseConstraint);
 
     // keep the mouse in sync with rendering
     render.mouse = mouse;
+
     // run the renderer
     Render.run(render);
+
+    // create runner
+    var runner = Runner.create();
+
+    // run the engine
+    Runner.run(runner, engine);
 
 </script>
 
