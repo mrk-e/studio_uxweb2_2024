@@ -53,8 +53,8 @@
 
     function deviceOrientationHandler(event) {
         orientationAlpha = Math.round(event.alpha * 10) / 10;
-        orientationBeta = Math.round(event.beta * 10) / 10;
-        orientationGamma = Math.round(event.gamma * 10) / 10;
+        orientationBeta = Math.round(event.beta * 10) / 10; //jeweils von -180 bis 180
+        orientationGamma = Math.round(event.gamma * 10) / 10; //jeweils von -180 bis 180
         console.log("deviceOrientationHandler");
     }
 
