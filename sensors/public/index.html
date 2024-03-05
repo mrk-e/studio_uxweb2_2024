@@ -119,8 +119,8 @@
         });
 
     // Gravitation umkehren
-    engine.world.gravity.x = -1; // Hier wird die Gravitation entgegengesetzt gesetzt
-    engine.world.gravity.y = -1; // Hier wird die Gravitation entgegengesetzt gesetzt
+    engine.world.gravity.x = (orientationBeta / 180); // Hier wird die Gravitation entgegengesetzt gesetzt
+    engine.world.gravity.y = (orientationGamma / 180); // Hier wird die Gravitation entgegengesetzt gesetzt
 
     Composite.add(engine.world, mouseConstraint);
 
